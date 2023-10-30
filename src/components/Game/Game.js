@@ -4,30 +4,15 @@ import { range, sample } from '../../utils';
 import { WORDS } from '../../data';
 import GuessInput from '../GuessInput/GuessInput';
 import GuessList from '../GuessList';
-import Banner from '../Banner';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import VisualKeyboard from '../VisualKeyboard/VisualKeyboard';
+import GameOverBanner from '../GameOverBanner/GameOverBanner';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
 // To make debugging easier, we'll log the solution in the console.
 console.info({ answer });
-
-function GameOverBanner({isWin, attemptNum}) {
-  const winMessage = <>
-                        <strong>Congratulations!</strong> Got it in{' '}
-                        <strong>{attemptNum} guesses</strong>.
-                     </>;
-  const lostMessage = <>Sorry, the correct answer is <strong>{answer}</strong>.</>
-
-  return(
-      <Banner
-        state={isWin? "happy" : "sad"}>
-          {isWin ? winMessage : lostMessage}
-      </Banner>    
-  )
-}
 
 function Game() {
   const [guessList, setGuessList] = React.useState(
@@ -35,18 +20,10 @@ function Game() {
       .map(() => "")
   );
   const [attemptNum, setAttemtNum] = React.useState(0);
-  const [isGameOver, setIsGameOver] = React.useState(false);
-  const [isWin, setIsWin] = React.useState(false);
+  //- playing, won, lost
+  const [gameState, setGameState] = React.useState("playing");
 
-  function handleWin() {
-    setIsGameOver(true);
-    setIsWin(true);
-  }
 
-  function handleLoss() {
-    setIsGameOver(true);
-    setIsWin(false);
-  }
   function onGuessSubmit(tentativeGuess) {
     const nextAttemptNum = attemptNum + 1;
 
@@ -65,11 +42,17 @@ function Game() {
       setAttemtNum(nextAttemptNum);
     }
 
-    if(hasWon()) handleWin();
+    if(hasWon()) {
+      setGameState("won")
+    }
     
-    if(hasLost()) handleLoss();
+    if(hasLost()) {
+      setGameState("lost")
+    }
 
   }
+
+  const isGameOver = gameState !== "playing";
 
   return (
     <>
@@ -78,8 +61,9 @@ function Game() {
       <VisualKeyboard guessList={guessList} answer={answer} />
       { isGameOver &&
           <GameOverBanner
-            isWin={isWin}
-            attemptNum={attemptNum}/>
+            isWin={gameState === "won"}
+            attemptNum={attemptNum}
+            answer={answer}/>
       }
     </>
   )
