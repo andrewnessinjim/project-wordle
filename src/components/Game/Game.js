@@ -7,6 +7,7 @@ import GuessList from '../GuessList';
 import Banner from '../Banner';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
+import VisualKeyboard from '../VisualKeyboard/VisualKeyboard';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -74,6 +75,7 @@ function Game() {
     <>
       <GuessList guessList={guessList} answer={answer}/>
       <GuessInput onGuessSubmit={onGuessSubmit} disabled={isGameOver}/>
+      <VisualKeyboard guessList={guessList} answer={answer} />
       { isGameOver &&
           <GameOverBanner
             isWin={isWin}

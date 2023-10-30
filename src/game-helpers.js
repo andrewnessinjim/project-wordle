@@ -53,3 +53,14 @@ export function checkGuess(guess, answer) {
 
   return result;
 }
+
+export function checkAllGuesses(guessList, answer) {
+  const result = {};
+  guessList
+    .filter(guess => !!guess)
+    .forEach(validGuess => {
+      let guessHint = checkGuess(validGuess, answer);
+      guessHint.forEach(letterHint => result[letterHint.letter] = letterHint.status)
+    })
+  return result;
+}
