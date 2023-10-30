@@ -9,10 +9,6 @@ import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import VisualKeyboard from '../VisualKeyboard/VisualKeyboard';
 import GameOverBanner from '../GameOverBanner/GameOverBanner';
 
-// Pick a random word on every pageload.
-const answer = sample(WORDS);
-// To make debugging easier, we'll log the solution in the console.
-console.info({ answer });
 
 function Game() {
   const [guessList, setGuessList] = React.useState(
@@ -23,6 +19,18 @@ function Game() {
   //- playing, won, lost
   const [gameState, setGameState] = React.useState("playing");
 
+  const [answer, setAnswer] = React.useState(() => sample(WORDS));
+  console.info({ answer });
+
+  function resetGame(){
+    console.log("Game reset");
+    setGuessList(range(NUM_OF_GUESSES_ALLOWED)
+        .map(() => ""));
+    setAttemtNum(0);
+    setGameState("playing");
+    setAnswer(sample(WORDS));
+    console.info({ answer });
+  }
 
   function onGuessSubmit(tentativeGuess) {
     const nextAttemptNum = attemptNum + 1;
@@ -63,7 +71,8 @@ function Game() {
           <GameOverBanner
             isWin={gameState === "won"}
             attemptNum={attemptNum}
-            answer={answer}/>
+            answer={answer}
+            onRestart={() => resetGame()}/>
       }
     </>
   )
